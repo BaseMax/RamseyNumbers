@@ -2,10 +2,10 @@
 // import array
 // import file
 main:
-	array output
 	string input=file.contents("graph-result.txt")
-	regex.matchAll("/===>(?<number>[0-9]+)/i", input, output)
-	array.sort($output["number"]);
+	// array output=regex.matchAll("/===>(?<number>[0-9]+)/i", input)
+	array output=input.matchAll("/===>(?<number>[0-9]+)/i")
+	output.sort();
 	each output["number"] as item:
 		__ item
 	end
