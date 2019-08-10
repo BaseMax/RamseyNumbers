@@ -1,0 +1,145 @@
+// https://github.com/BaseMax/RamseyNumbers
+// import time
+// import bigInt
+
+define SET_PAIR(item, first, end):
+	item.a=first
+	item.b=end
+end
+
+// type enum boolType:
+// 	false,
+// 	true,
+// end 
+
+type struct pair:
+	int a
+	int b
+end
+
+type struct color:
+	int a
+	int b
+	uint c
+end
+
+int art
+int count
+int value
+pair **items
+color *edges
+int edgesCount=0
+int itemsCount=0
+int subCount=10
+
+// uint randomColor:
+randomColor:
+	ret math.rand(count)
+end
+
+// uint found int i, int j:
+found int i, int j:
+	repeat x, 0, edgesCount:
+		if 
+		(edges[x].a == i && edges[x].b == j) ||
+		(edges[x].a == j && edges[x].b == i):
+			ret edges[x].c
+		end
+	end
+	ret -1
+end
+
+// int main:
+main:
+	art=43
+	count=2
+	value=5// both is 3
+	__ "R(", value, ",", value, ") ?= ", art
+	////////////////////////////////////
+	items=memory.alloc(size(pair*)*962598)
+	int first_limit=100000
+	int first_limit_index=0
+	edges=malloc(size(color)*903)
+	edgesCount=0
+	repeat i, 0, art:
+		repeat j, i+1, art:
+			SET_PAIR(edges[edgesCount], i+1, j+1)
+			__ "edge: ", i+1, ",", j+1
+			edgesCount++
+		end
+	end
+	repeat i, 0, art:
+		repeat j, i+1, art:
+			repeat l, j+1, art:
+				repeat w, l+1, art:
+					repeat e, w+1, art:
+						items[itemsCount]=malloc(size(pair)*subCount)
+						SET_PAIR(items[itemsCount][0], i+1, j+1)
+						SET_PAIR(items[itemsCount][1], i+1, l+1)
+						SET_PAIR(items[itemsCount][2], i+1, w+1)
+						SET_PAIR(items[itemsCount][3], i+1, e+1)
+
+						SET_PAIR(items[itemsCount][4], j+1, l+1)
+						SET_PAIR(items[itemsCount][5], j+1, w+1)
+						SET_PAIR(items[itemsCount][6], j+1, e+1)
+
+						SET_PAIR(items[itemsCount][7], l+1, w+1)
+						SET_PAIR(items[itemsCount][8], l+1, e+1)
+
+						SET_PAIR(items[itemsCount][9], w+1, e+1)
+						itemsCount++
+					end
+				end
+			end
+		end
+	end
+	__ "===> itemsCount is ", itemsCount
+	pf = file.open("graph-result.txt", "a")
+	// while true:
+	while:
+		label check:
+		first_limit_index++
+		if first_limit_index > first_limit:
+				__ "END, Limit....."
+				sys.exit(-1)
+		end
+		__ first_limit_index, "/", first_limit
+		pf.appendLine(first_limit_index + "/" + first_limit)
+		repeat i, 0, edgesCount:
+			edges[i].c=randomColor()
+		end
+		bool sameColor=false
+		repeat i, 0, itemsCount:
+			bool checkContinue=true
+			uint color=-1
+			repeat j, 0, value:
+				if color == -1:
+					color=found(items[i][j].a, items[i][j].b)
+					continue
+				end
+				else:
+					uint tcolor=found(items[i][j].a, items[i][j].b)
+					if tcolor != color:
+						checkContinue=false
+						break
+					end
+				end
+			end
+			// if checkContinue == true:
+			if checkContinue:
+				sameColor=true
+				__ "===>", i
+				pf.appendLine(i)
+				goto check
+			end
+		end
+		// if sameColor == false:
+		if !sameColor:
+			__ "Done"
+			sys.exit(1)
+		end
+	end
+	pf.close()
+	__ itemsCount
+	ret 0
+end
